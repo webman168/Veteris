@@ -1,0 +1,15 @@
+syntax = "proto3";
+option optimize_for = LITE_RUNTIME;
+
+message VTableEntryMsg {
+    string name = 1;
+    string bundleid = 2;
+    string developer = 3;
+    string iconurl = 4;
+    string version = 5;
+    string fallback_iconurl = 6;
+}
+
+message VTableResponseMsg {
+    repeated VTableEntryMsg entries = 1;
+}

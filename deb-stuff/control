@@ -1,0 +1,15 @@
+Package: com.victorlobe.veteris
+Name: Veteris
+Version: 2.1.7
+Architecture: iphoneos-arm
+Depends: firmware (>= 5.0), com.victorlobe.veterishelper
+Conflicts: com.ixmoe.1pwn.veteris, moe.yzu.veterishelper
+Replaces: com.ixmoe.1pwn.veteris, moe.yzu.veterishelper
+Description: Welcome back!
+Homepage: http://www.veteris.victorlobe.me/
+Maintainer: Victor
+Author: Victor
+Icon: file:///Applications/Veteris.app/AppIcon57x57@2x.png
+Section: Utilities
+Depiction: http://repo.victorlobe.me/depictions/depiction.html?id=com.victorlobe.veteris
+Compatibility: iOS 5.0+
