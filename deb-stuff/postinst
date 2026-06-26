@@ -1,0 +1,13 @@
+#!/bin/sh
+# Normalize /Applications/Veteris.app ownership and executable permissions.
+set -e
+
+APP=/Applications/Veteris.app
+
+if [ -d "$APP" ]; then
+    chown -R root:mobile "$APP" 2>/dev/null || true
+    chmod -R 755 "$APP" 2>/dev/null || true
+    [ -f "$APP/Veteris" ] && chmod 755 "$APP/Veteris" 2>/dev/null || true
+fi
+
+exit 0
