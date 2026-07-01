@@ -11,6 +11,7 @@
 @property (nonatomic, retain) UILabel *appDeveloperLabel;
 @property (nonatomic, retain) UIImageView *appImageView;
 @property (nonatomic, retain) UIActivityIndicatorView *appActivityIndicator;
+@property (nonatomic, retain) UIActivityIndicatorView *appDownloadActivityIndicator;
 @property (nonatomic, retain) UIProgressView *appProgressView;
 @property (nonatomic, retain) UILabel *appProgressLabel;
 - (void)updateFromRep:(YZQueueRep *)rep;

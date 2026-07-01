@@ -18,6 +18,10 @@ static const unsigned long long kMinimumResumeBytes = 4096;
 #define YZDownloadLog(...) do {} while (0)
 #endif
 
+static NSDictionary *YZInstallOptions(void) {
+    return [NSDictionary dictionaryWithObject:@"User" forKey:@"ApplicationType"];
+}
+
 static NSString *YZSanitizedURLString(NSString *urlString) {
     if ([NSURL URLWithString:urlString] != nil) {
         return urlString;
@@ -160,20 +164,29 @@ static BOOL YZShouldPreservePartialAtPath(NSString *path) {
         debugLog(@"File does not exist at path but skipping: %@", filePath);
         return false;
     }
-    int ret;
+    NSDictionary *options = YZInstallOptions();
+    int ret = -1;
     if (SYSTEM_VERSION_LESS_THAN(@"8.0")) {
-        ret = MobileInstallationInstall((__bridge CFStringRef)filePath, (__bridge CFDictionaryRef)[NSDictionary dictionaryWithObject:@"User" forKey:@"ApplicationType"], NULL, NULL);
+        ret = MobileInstallationInstall((__bridge CFStringRef)filePath, (__bridge CFDictionaryRef)options, NULL, NULL);
+        YZDownloadLog(@"mobile installation finished path=%@ ret=%d", filePath, ret);
     } else {
         LSApplicationWorkspace *workspace = [LSApplicationWorkspace defaultWorkspace];
-        NSError *error;
-        [workspace installApplication:[NSURL fileURLWithPath:filePath] withOptions:nil error:&error];
+        NSError *error = nil;
+        BOOL installed = [workspace installApplication:[NSURL fileURLWithPath:filePath] withOptions:options error:&error];
         if (error) {
-            debugLog(@"Error: %@", [error localizedDescription]);
+            debugLog(@"Install error: %@", [error localizedDescription]);
+            YZDownloadLog(@"workspace install failed path=%@ error=%@ userInfo=%@", filePath, error, [error userInfo]);
+        } else if (!installed) {
+            YZDownloadLog(@"workspace install returned NO path=%@", filePath);
+        } else {
+            ret = 0;
         }
-        ret = (error == nil) ? 0 : 1;
     }
-    [self removeFileAt:filePath];
-    return (ret == 0);
+    BOOL success = (ret == 0);
+    if (success) {
+        [self removeFileAt:filePath];
+    }
+    return success;
 }
 
 + (void)downloadFileToPath:(NSString *)urlString pathFromString:(NSString *)str parent:(YZQueueRep *)parent {
@@ -206,7 +219,7 @@ static BOOL YZShouldPreservePartialAtPath(NSString *path) {
                                                                         resumeOffset:resumeOffset
                                                                              headers:reqHeaders
                                                                             progress:^(unsigned long long current, unsigned long long total) {
-        if (parent.downloadProgressBlock != nil && total > 0) {
+        if (parent.downloadProgressBlock != nil) {
             parent.downloadProgressBlock((NSUInteger)current, (NSUInteger)total);
         }
     } completion:^(YZArchiveTLSResult *result) {

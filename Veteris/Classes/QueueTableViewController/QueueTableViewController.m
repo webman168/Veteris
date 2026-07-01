@@ -109,6 +109,7 @@
     }
     if (rep.state != YZRepStateDownloading) {
         cell.appProgressView.hidden = YES;
+        [cell.appDownloadActivityIndicator stopAnimating];
         cell.appProgressLabel.hidden = YES;
     }
     [cell updateFromRep:rep];

@@ -526,7 +526,7 @@ static int YZTLSBioRecv(void *ctx, unsigned char *buf, size_t len);
 }
 
 - (void)reportProgress:(unsigned long long)current total:(unsigned long long)total {
-    if (self.progressBlock == nil || total == 0) {
+    if (self.progressBlock == nil) {
         return;
     }
     dispatch_async(dispatch_get_main_queue(), ^{

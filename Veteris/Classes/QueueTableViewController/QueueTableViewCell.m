@@ -11,6 +11,7 @@
 @synthesize appDeveloperLabel;
 @synthesize appImageView;
 @synthesize appActivityIndicator;
+@synthesize appDownloadActivityIndicator;
 @synthesize appProgressView;
 @synthesize appProgressLabel;
 - (id)initWithFrame:(CGRect)frame reuseIdentifier:(NSString *)reuseIdentifier {
@@ -71,6 +72,11 @@
         appProgressView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin;
         appProgressView.hidden = YES;
 
+        appDownloadActivityIndicator = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
+        appDownloadActivityIndicator.frame = CGRectMake(280, 29, 20, 20);
+        appDownloadActivityIndicator.hidesWhenStopped = YES;
+        appDownloadActivityIndicator.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin;
+
         appProgressLabel = [[UILabel alloc] initWithFrame:CGRectMake(260, 47, 60, 14)];
         appProgressLabel.font = [UIFont systemFontOfSize:9];
         appProgressLabel.textColor = [UIColor lightGrayColor];
@@ -86,6 +92,7 @@
         [self.contentView addSubview:appDeveloperLabel];
         [self.contentView addSubview:appActivityIndicator];
         [self.contentView addSubview:appProgressView];
+        [self.contentView addSubview:appDownloadActivityIndicator];
         [self.contentView addSubview:appProgressLabel];
 
         // change cilcked color
@@ -99,6 +106,7 @@
     _rep = nil;
     self.appProgressView.hidden = YES;
     self.appProgressView.progress = 0;
+    [self.appDownloadActivityIndicator stopAnimating];
     self.appProgressLabel.hidden = YES;
     self.appProgressLabel.text = nil;
 }
@@ -131,9 +139,16 @@
 
 - (void)updateDownloadProgressWithCurrent:(NSUInteger)current total:(NSUInteger)total {
     if (total == 0) {
+        appProgressView.hidden = YES;
+        appProgressView.progress = 0;
+        appProgressLabel.text = nil;
         appProgressLabel.hidden = YES;
+        [appDownloadActivityIndicator startAnimating];
+        appVersionLabel.text = [self versionTextForRep:_rep sizeText:[QueueTableViewCell stringForByteCount:current]];
         return;
     }
+    [appDownloadActivityIndicator stopAnimating];
+    appProgressView.hidden = NO;
     float progress = (float)current / (float)total;
     progress = MIN(MAX(progress, 0.0), 1.0);
     appProgressView.progress = progress;
